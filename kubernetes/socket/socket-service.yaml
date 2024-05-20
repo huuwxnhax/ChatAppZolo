@@ -9,5 +9,4 @@ spec:
   ports:
   - port: 8800
     protocol: TCP
-    targetPort: 8800
   type: ClusterIP
