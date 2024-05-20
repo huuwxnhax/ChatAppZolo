@@ -17,14 +17,14 @@ spec:
       - name: server-deployment
         image: huuwxnhax/serverapp:v2
         env:
-        - name: MONGO_USERNAME
+        - name: USERNAME_DB
           valueFrom:
             secretKeyRef:
               name: mongodb-secret
               key: username
         - name: PORT
           value: "5000"
-        - name: MONGO_PASSWORD
+        - name: PASSWORD_DB
           valueFrom:
             secretKeyRef:
               name: mongodb-secret
@@ -40,17 +40,17 @@ spec:
             secretKeyRef:
               name: server-secret
               key: JWTKEY
-        - name: AWS_ACCESS_KEY_ID
+        - name: AWS_ACCESS_KEY
           valueFrom:
             secretKeyRef:
               name: server-secret
               key: AWS_ACCESS_KEY
-        - name: AWS_SECRET_ACCESS_KEY
+        - name: AWS_SECRET_KEY
           valueFrom:
             secretKeyRef:
               name: server-secret
               key: AWS_SECRET_KEY
-        - name: AWS_DEFAULT_REGION
+        - name: AWS_REGION
           valueFrom:
             secretKeyRef:
               name: server-secret
@@ -65,12 +65,12 @@ spec:
             secretKeyRef:
               name: server-secret
               key: EMAIL_HOST
-        - name: EMAIL_HOST_USER
+        - name: EMAIL_USER
           valueFrom:
             secretKeyRef:
               name: server-secret
               key: EMAIL_USER
-        - name: EMAIL_HOST_PASSWORD
+        - name: PASSWORD
           valueFrom:
             secretKeyRef:
               name: server-secret
