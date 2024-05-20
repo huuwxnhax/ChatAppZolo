@@ -23,4 +23,4 @@ spec:
         - containerPort: 8800
         env:
         - name: ORIGIN_URI
-          value: http://appchatzolo.huuwxnhax.xyz
+          value: http://appchatzolo.huuwxnhax.xyz/socket.io
