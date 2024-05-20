@@ -1,0 +1,65 @@
+.drawer-container {
+  max-width: 30vw;
+  height: 100vh;
+  min-width: 25vw;
+}
+
+.drawer-header {
+  height: 10vh;
+  background-color: #f5f5f5;
+  border-bottom: 1px solid #e5e5e5;
+  padding: 0 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.drawer-header h3 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: #333;
+}
+
+.drawer-body {
+  height: 90vh;
+  background-color: #fff;
+  border-bottom: 1px solid #e5e5e5;
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+.drawer-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid #e5e5e5;
+  transition: ease-in-out;
+  duration: 0.5s;
+  border-radius: 14px;
+}
+
+.drawer-item:hover {
+  background-color: #f5f5f5;
+  cursor: pointer;
+}
+
+.drawer-infor {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.drawer-name {
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: #333;
+}
+
+.drawer-email {
+  font-size: 1rem;
+  font-weight: 400;
+  color: #333;
+}

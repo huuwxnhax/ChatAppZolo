@@ -1,0 +1,105 @@
+.groups-container {
+}
+
+.header-modal {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 20px;
+}
+
+.form-modal {
+  display: flex;
+  flex-direction: column;
+  margin: 200px auto;
+  scroll-behavior: smooth;
+  overflow-y: auto;
+  width: 100%;
+  height: 38vh;
+}
+
+.button-section {
+  position: fixed;
+  background-color: #fff;
+  bottom: 0;
+  right: 0;
+  padding: 10px;
+  margin: 5px;
+}
+
+.following-section {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  font-size: 13px;
+  gap: 10px;
+  border-bottom: 1px solid #e5e5e5;
+  border-radius: 12px;
+}
+
+.following-section > h3 {
+  margin: 0;
+  padding-top: 5px;
+  font-size: 1.2em;
+  font-weight: 400;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.followerImage {
+  width: 3.2rem;
+  height: 3.2rem;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.following-user {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 10px;
+}
+
+.following-user > div {
+  display: flex;
+  align-items: center;
+}
+
+.add-button {
+  height: 2rem;
+  padding-left: 20px;
+  padding-right: 20px;
+  font-weight: bold;
+  color: orange;
+  align-self: center;
+  cursor: pointer;
+}
+
+.Search {
+  width: 100%;
+  height: 40px;
+  background-color: var(--inputColor);
+  border-radius: 10px;
+  padding: 5px;
+}
+.Search > input {
+  width: 100%;
+  height: 100%;
+  background-color: transparent;
+  border: none;
+  outline: none;
+}
+.s-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(98.63deg, #37b925 0%, #49d3bf 100%);
+  border-radius: 5px;
+  padding: 4px;
+  color: white;
+}

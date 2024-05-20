@@ -1,0 +1,41 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: app-ingress
+  namespace: workshop
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
+spec:
+  ingressClassName: alb
+  defaultBackend:
+    service:
+      name: client-service
+      port:
+        number: 3000
+  rules:
+  - host: appchatzolo.huuwxnhax.xyz
+    http:
+      paths:
+      - path: /api
+        pathType: Prefix  
+        backend:
+          service:
+            name: server-service
+            port:
+              number: 5000
+      - path: /auth
+        pathType: Prefix
+        backend:
+          service:
+            name: client-service
+            port:
+              number: 3000
+      - path: /socket
+        pathType: Prefix
+        backend:
+          service:
+            name: socket-service
+            port:
+              number: 8800

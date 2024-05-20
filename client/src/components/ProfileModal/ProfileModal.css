@@ -1,0 +1,44 @@
+.inforForm {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+}
+
+.backgroundImage-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  width: 100%;
+  height: 20vh;
+  gap: 0.5rem;
+}
+
+.backgroundImage-section > span {
+  font-size: 1.2rem;
+  font-weight: 400;
+  color: #000;
+}
+
+.backgroundImage-infor {
+  width: 25%;
+  height: 100%;
+  border-radius: 50%;
+}
+
+.textInfor-section {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.textInfor-section > div {
+  display: flex;
+  gap: 1rem;
+  width: 90%;
+}

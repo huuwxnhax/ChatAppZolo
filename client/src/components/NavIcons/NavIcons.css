@@ -1,0 +1,22 @@
+.navIcons {
+  display: flex;
+  justify-content: space-between;
+}
+
+.icons {
+  width: 1.75rem !important;
+  height: 1.75rem !important;
+}
+
+.navIcons .icons:hover {
+  cursor: pointer;
+}
+
+.box-modal {
+  width: 40vw !important;
+  height: 70vh !important;
+  border-radius: 16px;
+}
+
+.textfield {
+}

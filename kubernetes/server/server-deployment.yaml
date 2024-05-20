@@ -1,0 +1,92 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: server-deployment
+  namespace: workshop
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: server-deployment
+  template:
+    metadata:
+      labels:
+        app: server-deployment
+    spec:
+      containers:
+      - name: server-deployment
+        image: huuwxnhax/serverapp:v2
+        env:
+        - name: MONGO_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: mongodb-secret
+              key: username
+        - name: PORT
+          value: "5000"
+        - name: MONGO_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mongodb-secret
+              key: password
+        - name: MONGO_STR
+          # value: mongodb://appchat-db-service:27017/chatappdb?directConnection=true
+          valueFrom:
+            secretKeyRef:
+              name: mongodb-secret
+              key: connection
+        - name: JWTKEY
+          valueFrom:
+            secretKeyRef:
+              name: server-secret
+              key: JWTKEY
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              name: server-secret
+              key: AWS_ACCESS_KEY
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: server-secret
+              key: AWS_SECRET_KEY
+        - name: AWS_DEFAULT_REGION
+          valueFrom:
+            secretKeyRef:
+              name: server-secret
+              key: AWS_REGION
+        - name: AWS_BUCKET_NAME
+          valueFrom:
+            secretKeyRef:
+              name: server-secret
+              key: AWS_BUCKET_NAME
+        - name: EMAIL_HOST
+          valueFrom:
+            secretKeyRef:
+              name: server-secret
+              key: EMAIL_HOST
+        - name: EMAIL_HOST_USER
+          valueFrom:
+            secretKeyRef:
+              name: server-secret
+              key: EMAIL_USER
+        - name: EMAIL_HOST_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: server-secret
+              key: PASSWORD
+        ports:
+        - containerPort: 5000
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 5000
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 5000
+          initialDelaySeconds: 10
+          periodSeconds: 10
+
