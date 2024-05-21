@@ -32,7 +32,7 @@ spec:
             name: client-service
             port:
               number: 3000
-      - path: /websocket
+      - path: /socket.io/websocket
         pathType: Prefix
         backend:
           service:
