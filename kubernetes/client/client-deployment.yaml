@@ -24,7 +24,7 @@ spec:
         - name: REACT_APP_PUBLIC_FOLDER
           value: http://server-service:5000/api/images/
         - name: REACT_APP_SOCKET_URL
-          value: http://appchatzolo.huuwxnhax.xyz/websocket
+          value: http://appchatzolo.huuwxnhax.xyz/socket.io
 
 
     
