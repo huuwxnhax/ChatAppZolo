@@ -24,12 +24,16 @@ const upload = multer({
   },
 });
 
+console.log("AWS_ACCESS_KEY:", process.env.AWS_ACCESS_KEY);
+console.log("AWS_SECRET_KEY:", process.env.AWS_SECRET_KEY);
+console.log("AWS_REGION:", process.env.AWS_REGION);
+
 // AWS S3 Client
 const s3 = new S3Client({
   region: process.env.AWS_REGION,
   credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY,
-    secretAccessKey: process.env.AWS_SECRET_KEY,
+    accessKeyId: process.env.AWS_ACCESS_KEY.trim(),
+    secretAccessKey: process.env.AWS_SECRET_KEY.trim(),
   },
 });
 
@@ -41,11 +45,14 @@ export const addMessage = async (req, res) => {
   // Xử lý lỗi khi upload file
   singleFileUpload(req, res, async (uploadError) => {
     if (uploadError) {
+      console.error("Error uploading file:", uploadError);
       return res.status(400).json({ error: uploadError.message });
     }
+    console.log("File uploaded successfully:", req.file);
 
     // Lấy dữ liệu từ body của request
     const { chatId, senderId, text } = req.body;
+    console.log("Request body:", { chatId, senderId, text });
     const hiddenFor = "";
     // Kiểm tra xem có file được gửi lên không và lưu trữ đường dẫn tương ứng
     let imageUrl, videoUrl, pdfUrl, docxUrl;
@@ -55,15 +62,16 @@ export const addMessage = async (req, res) => {
       const fileKey = `uploads/${uniqueFileName}`;
 
       const uploadParams = {
-        Bucket: process.env.AWS_BUCKET_NAME,
+        Bucket: process.env.AWS_BUCKET_NAME.trim(),
         Key: fileKey,
         Body: req.file.buffer,
         ACL: "public-read",
       };
 
       try {
+        console.log("Uploading file to S3 with params:", uploadParams);
         await s3.send(new PutObjectCommand(uploadParams));
-
+        console.log("File uploaded to S3 successfully");
         // Xác định loại tệp và lưu đường dẫn tương ứng
         switch (fileExtension) {
           case ".jpeg":
@@ -106,6 +114,7 @@ export const addMessage = async (req, res) => {
     try {
       // Lưu tin nhắn vào cơ sở dữ liệu
       const result = await message.save();
+      console.log("Message saved successfully:", result);
       res.status(200).json(result);
     } catch (error) {
       console.error("Error saving message to database:", error);

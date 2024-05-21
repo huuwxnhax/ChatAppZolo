@@ -58,6 +58,7 @@ const ChatBox = ({
 
   useEffect(() => {
     socket.current = io(process.env.REACT_APP_SOCKET_URL, {
+      path: "/",
       transports: ["websocket", "polling"],
     });
   }, [user]);

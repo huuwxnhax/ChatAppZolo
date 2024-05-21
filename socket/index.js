@@ -2,6 +2,7 @@ require("dotenv").config();
 const corOgirin = process.env.ORIGIN_URI; // "http://localhost:3000" client
 
 const io = require("socket.io")(8800, {
+  path: "/websocket",
   cors: {
     origin: corOgirin,
     methods: ["GET", "POST"],

@@ -43,8 +43,10 @@ const Chat = () => {
   }, [user._id, chatdata]);
 
   // Connect to Socket.io
+  // REACT_APP_SOCKET_URL = http://localhost:8800
   useEffect(() => {
     socket.current = io(process.env.REACT_APP_SOCKET_URL, {
+      path: "/",
       transports: ["websocket", "polling"],
     });
     socket.current.emit("new-user-add", user._id);
