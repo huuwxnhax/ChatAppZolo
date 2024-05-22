@@ -1,7 +1,19 @@
 require("dotenv").config();
+const http = require("http");
 const corOgirin = process.env.ORIGIN_URI; // "http://localhost:3000" client
 
-const io = require("socket.io")(8800, {
+// Create HTTP server
+const server = http.createServer((req, res) => {
+  if (req.url === "/health") {
+    res.writeHead(200);
+    res.end("OK");
+  } else {
+    res.writeHead(404);
+    res.end();
+  }
+});
+
+const io = require("socket.io")(server, {
   path: "/websocket",
   cors: {
     origin: corOgirin,
@@ -10,6 +22,22 @@ const io = require("socket.io")(8800, {
     credentials: true,
   },
 });
+
+// Start server
+const PORT = process.env.PORT || 8800;
+server.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
+
+// const io = require("socket.io")(8800, {
+//   path: "/websocket",
+//   cors: {
+//     origin: corOgirin,
+//     methods: ["GET", "POST"],
+//     allowedHeaders: ["Content-Type"],
+//     credentials: true,
+//   },
+// });
 
 let activeUsers = [];
 
@@ -32,19 +60,6 @@ io.on("connection", (socket) => {
     // send all active users to all users
     io.emit("get-users", activeUsers);
   });
-
-  // send message to a specific user
-  // socket.on("send-message", (data) => {
-  //   const { receiverId } = data;
-  //   console.log("Receiver Id: ", receiverId);
-  //   console.log("Active Users: ", activeUsers);
-  //   console.log("Data: ", data);
-  //   const user = activeUsers.find((user) => user.userId === receiverId);
-  //   console.log("Sending from socket to :", receiverId)
-  //   if (user) {
-  //     io.to(user.socketId).emit("recieve-message", data);
-  //   }
-  // });
 
   // send message to a group
   socket.on("send-message", (data) => {

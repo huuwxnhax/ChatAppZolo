@@ -24,3 +24,5 @@ spec:
         env:
         - name: ORIGIN_URI
           value: http://appchatzolo.huuwxnhax.xyz
+        - name: PORT
+          value: "8800"
