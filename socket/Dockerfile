@@ -13,8 +13,5 @@ RUN npm install
 # Copy the rest of the application code to the working directory
 COPY . .
 
-# Expose the port your socket server will use
-EXPOSE 8800
-
 # Command to run the socket server
 CMD ["node", "index.js"]

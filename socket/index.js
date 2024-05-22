@@ -1,5 +1,7 @@
 require("dotenv").config();
 const http = require("http");
+const express = require("express");
+const app = express();
 const corOgirin = process.env.ORIGIN_URI; // "http://localhost:3000" client
 
 // Create HTTP server
@@ -21,6 +23,10 @@ const io = require("socket.io")(server, {
     allowedHeaders: ["Content-Type"],
     credentials: true,
   },
+});
+
+app.get("/", (req, res) => {
+  res.send("Server is running");
 });
 
 // Start server
