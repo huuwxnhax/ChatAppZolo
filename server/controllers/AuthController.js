@@ -91,6 +91,7 @@ export const sendOtpByEmail = async (req, res) => {
 
     // Lưu mã OTP vào cơ sở dữ liệu
     await OTP.create({ username, otp });
+    console.log("otp save db:", otp);
 
     // Gửi mã OTP qua email
     await sendOTP(username, otp);
@@ -110,17 +111,22 @@ export const registerUserWithOTP = async (req, res) => {
     // Kiểm tra xem người dùng đã tồn tại hay chưa
     const existingUser = await UserModel.findOne({ username });
     if (existingUser) {
+      console.log("existingUser", existingUser);
+      console.log("Email has already existed");
       return res.status(400).json({ message: "Email has already existed" });
     }
 
     // Kiểm tra xem mã OTP đã nhập có chính xác hay không
     const otpRecord = await OTP.findOne({ username, otp });
     if (!otpRecord) {
+      console.log("otpRecord", otpRecord);
+      console.log("Invalid OTP");
       return res.status(400).json({ message: "Invalid OTP" });
     }
 
     // Mã hóa mật khẩu
     const hashedPassword = await bcrypt.hash(password, 10);
+    console.log("hashedPassword", hashedPassword);
 
     // Tạo người dùng mới
     const newUser = await UserModel.create({
@@ -129,6 +135,7 @@ export const registerUserWithOTP = async (req, res) => {
       firstname,
       lastname,
     });
+    console.log("newUser", newUser);
 
     // Tạo JWT token
     // changed
@@ -138,6 +145,7 @@ export const registerUserWithOTP = async (req, res) => {
       process.env.JWTKEY,
       { expiresIn: "1h" }
     );
+    console.log("token", token);
 
     // Trả về thông tin người dùng và token
     res.status(200).json({ user: newUser, token });
