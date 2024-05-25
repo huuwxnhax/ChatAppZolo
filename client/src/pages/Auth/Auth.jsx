@@ -4,7 +4,7 @@ import Logo from "../../img/logo.png";
 import { logIn, signUp } from "../../actions/AuthActions.js";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { sendOtp } from "../../api/AuthRequests.js";
+import { forgotPassword, sendOtp } from "../../api/AuthRequests.js";
 // import Toaster from '../../components/Following/Toaster.js';
 
 const Auth = () => {
@@ -16,18 +16,19 @@ const Auth = () => {
     confirmpass: "",
     otp: "",
   };
-  
+
   // const loading = useSelector((state) => state.authReducer.loading);
   const errors = useSelector((state) => state.authReducer.error);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [isSignUp, setIsSignUp] = useState(false);
+  const [isForgotPass, setIsForgotPass] = useState(false);
 
   const [data, setData] = useState(initialState);
 
   const [confirmPass, setConfirmPass] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
-
+  const [sendMess, setSendMess] = useState("");
 
   // Reset Form
   const resetForm = () => {
@@ -42,28 +43,32 @@ const Auth = () => {
 
   const handleSendOtp = (e) => {
     e.preventDefault();
-    console.log("data email", data.username)
+    console.log("data email", data.username);
     sendOtp(data.username);
-    console.log("data", data)
-}
-  
+    console.log("data", data);
+  };
+
   const handleSubmit = (e) => {
     setConfirmPass(true);
     e.preventDefault();
-      if (isSignUp) {
-        if (data.password === data.confirmpass) {
-          dispatch(signUp(data, navigate));
-        } else {
-          setConfirmPass(false);
-        }
+    if (isSignUp) {
+      if (data.password === data.confirmpass) {
+        dispatch(signUp(data, navigate));
+      } else {
+        setConfirmPass(false);
+      }
+    } else {
+      if (isForgotPass) {
+        forgotPassword(data.username);
+        setSendMess("Password sent to your email");
       } else {
         dispatch(logIn(data, navigate));
-        if (errors) {
-          setErrorMessage("Invalid email or password");
-        }
       }
+      if (errors) {
+        setErrorMessage("Invalid email or password");
+      }
+    }
   };
-  
 
   return (
     <div className="Auth">
@@ -83,8 +88,12 @@ const Auth = () => {
 
       <div className="a-right">
         <form className="infoForm authForm" onSubmit={handleSubmit}>
-          <h3>{isSignUp ? "Register" : "Login"}</h3>
-          
+          {isSignUp ? (
+            <h3>Register</h3>
+          ) : (
+            <h3>{isForgotPass ? "Forgot Password" : "Login"}</h3>
+          )}
+
           {isSignUp && (
             <>
               <div>
@@ -127,63 +136,77 @@ const Auth = () => {
               onChange={handleChange}
               title="Email wrong format"
             />
-            {isSignUp && (<button 
-              className="button infoButton"
-              type="button"
-              onClick={handleSendOtp}
-            >
-              Send OTP
-            </button>)}
-          </div>
-          
-          <div>
-            <input
-              required
-              type="password"
-              className="infoInput"
-              placeholder="Password"
-              name="password"
-              value={data.password}
-              onChange={handleChange}
-              pattern=".{4,}"
-              title="Password must be at least 4 characters long"
-            />
             {isSignUp && (
+              <button
+                className="button infoButton"
+                type="button"
+                onClick={handleSendOtp}
+              >
+                Send OTP
+              </button>
+            )}
+          </div>
+
+          <div>
+            {!isForgotPass && (
               <input
                 required
                 type="password"
                 className="infoInput"
-                name="confirmpass"
-                placeholder="Confirm Password"
+                placeholder="Password"
+                name="password"
+                value={data.password}
                 onChange={handleChange}
                 pattern=".{4,}"
                 title="Password must be at least 4 characters long"
               />
             )}
+            {isSignUp && (
+              <>
+                <input
+                  required
+                  type="password"
+                  className="infoInput"
+                  name="confirmpass"
+                  placeholder="Confirm Password"
+                  onChange={handleChange}
+                  pattern=".{4,}"
+                  title="Password must be at least 4 characters long"
+                />
+              </>
+            )}
           </div>
 
-          {isSignUp && (<div>
-            <input 
-              type="text"
-              placeholder="OTP"
-              className="infoInput"
-              name="otp"
-              value={data.otp}
-              onChange={handleChange}
-            />
-          </div>)}
+          {isSignUp && (
+            <div>
+              <input
+                type="text"
+                placeholder="OTP"
+                className="infoInput"
+                name="otp"
+                value={data.otp}
+                onChange={handleChange}
+              />
+            </div>
+          )}
 
-          <span
-            style={{
-              color: "red",
-              fontSize: "12px",
-              alignSelf: "flex-end",
-              marginRight: "5px",
-              display: confirmPass ? "none" : "block",
-            }}
-          >
-            *Confirm password is not same
-          </span>
+          {sendMess && (
+            <span style={{ color: "green", fontSize: "12px" }}>{sendMess}</span>
+          )}
+
+          {!isForgotPass && (
+            <span
+              style={{
+                color: "red",
+                fontSize: "12px",
+                alignSelf: "flex-end",
+                marginRight: "5px",
+                display: confirmPass ? "none" : "block",
+              }}
+            >
+              *Confirm password is not same
+            </span>
+          )}
 
           {errorMessage && (
             <span style={{ color: "red", fontSize: "12px" }}>
@@ -192,28 +215,67 @@ const Auth = () => {
           )}
 
           <div>
-            <span
-              style={{
-                fontSize: "12px",
-                cursor: "pointer",
-                textDecoration: "underline",
-              }}
-              onClick={() => {
-                resetForm();
-                setIsSignUp((prev) => !prev);
-              }}
-            >
-              {isSignUp
-                ? "Already have an account Login"
-                : "Don't have an account Sign up"}
-            </span>
-            <button
-              className="button infoButton"
-              type="Submit"
-              // disabled={loading}
-            >
-              {isSignUp ? "SignUp" : "Login"}
-            </button>
+            {isSignUp ? (
+              <span
+                style={{
+                  fontSize: "12px",
+                  cursor: "pointer",
+                  textDecoration: "underline",
+                }}
+                onClick={() => {
+                  resetForm();
+                  setIsSignUp((prev) => !prev);
+                }}
+              >
+                Already have an account? Login
+              </span>
+            ) : (
+              <>
+                <span
+                  style={{
+                    fontSize: "12px",
+                    cursor: "pointer",
+                    textDecoration: "underline",
+                  }}
+                  onClick={() => {
+                    resetForm();
+                    setIsSignUp((prev) => !prev);
+                  }}
+                >
+                  Sign up account
+                </span>
+                <span
+                  style={{
+                    fontSize: "12px",
+                    cursor: "pointer",
+                    textDecoration: "underline",
+                  }}
+                  onClick={() => {
+                    resetForm();
+                    setIsForgotPass((prev) => !prev);
+                  }}
+                >
+                  {isForgotPass ? "Login Form" : "Forgot Password"}
+                </span>
+              </>
+            )}
+            {isSignUp ? (
+              <button
+                className="button infoButton"
+                type="Submit"
+                // disabled={loading}
+              >
+                SignUp
+              </button>
+            ) : (
+              <button
+                className="button infoButton"
+                type="Submit"
+                // disabled={loading}
+              >
+                {isForgotPass ? "Send Pass" : "Login"}
+              </button>
+            )}
           </div>
         </form>
       </div>

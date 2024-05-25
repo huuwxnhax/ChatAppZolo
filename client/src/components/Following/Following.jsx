@@ -5,6 +5,7 @@ import "./Following.css";
 import { createChat, findChat } from "../../api/ChatRequests";
 import Toaster from "./Toaster";
 import { updateChatData } from "../../actions/ChatAction";
+import defaultProfile from "../../img/defaultProfile.png";
 
 const Following = ({ handleSelectUser, closeModal }) => {
   const [userFollowing, setUserFollowing] = useState([]);
@@ -89,7 +90,7 @@ const Following = ({ handleSelectUser, closeModal }) => {
               src={
                 person.data.profilePicture
                   ? person.data.profilePicture
-                  : process.env.REACT_APP_PUBLIC_FOLDER + "defaultProfile.png"
+                  : defaultProfile
               }
               alt="Profile"
               className="followerImage"

@@ -16,6 +16,7 @@ import Logo from "../../img/logo.png";
 import MenuIcon from "@mui/icons-material/Menu";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { io } from "socket.io-client";
+import defaultProfile from "../../img/defaultProfile.png";
 
 import {
   IconButton,
@@ -25,12 +26,13 @@ import {
   Backdrop,
   Fade,
   Box,
+  Button,
+  Typography,
 } from "@mui/material";
 import MembersModal from "../Modal/MembersModal";
 import FollowModal from "../Modal/FollowModal";
 import { deleteGroup, leaveGroup } from "../../api/GroupRequests";
 import { useSelector } from "react-redux";
-import MoreVert from "@mui/icons-material/MoreVert";
 
 const ChatBox = ({
   chat,
@@ -52,9 +54,12 @@ const ChatBox = ({
   const [menuAnchorEl, setMenuAnchorEl] = useState(null);
   const [openMembersModal, setOpenMembersModal] = useState(false);
   const [openFollowModal, setOpenFollowModal] = useState(false);
+  const [openDeleteGroupModal, setOpenDeleteGroupModal] = useState(false);
 
   const [hoveredMessage, setHoveredMessage] = useState(null);
   const [showDeleteOptions, setShowDeleteOptions] = useState(false);
+
+  const [isLeaveGroup, setIsLeaveGroup] = useState(false);
 
   useEffect(() => {
     socket.current = io(process.env.REACT_APP_SOCKET_URL, {
@@ -135,15 +140,29 @@ const ChatBox = ({
         handleOpenFollowModal();
         break;
       case "leaveGroup":
-        handleLeaveGroup();
+        // handleLeaveGroup();
+        setIsLeaveGroup(true);
+        setOpenDeleteGroupModal(true);
         break;
       case "deleteGroup":
-        handleDeleteGroup();
+        // handleDeleteGroup();
+        setOpenDeleteGroupModal(true);
         break;
       default:
         break;
     }
     setMenuAnchorEl(null); // Đóng menu dropdown sau khi thực hiện hành động
+  };
+
+  const handleConfirmDeleteGroup = () => {
+    handleDeleteGroup();
+    setOpenDeleteGroupModal(false);
+  };
+
+  const handleConfirmLeaveGroup = () => {
+    handleLeaveGroup();
+    setIsLeaveGroup(false);
+    setOpenDeleteGroupModal(false);
   };
 
   const style = {
@@ -342,8 +361,7 @@ const ChatBox = ({
                         src={
                           userData?.profilePicture
                             ? userData.profilePicture
-                            : process.env.REACT_APP_PUBLIC_FOLDER +
-                              "defaultProfile.png"
+                            : defaultProfile
                         }
                         alt="Profile"
                         className="followerImage"
@@ -507,7 +525,7 @@ const ChatBox = ({
               {/* add logo here */}
               Tap on a chat to start conversation...
             </span>
-            <img src={Logo} />
+            <img src={Logo} alt="logo" />
           </div>
         )}
       </div>
@@ -557,6 +575,52 @@ const ChatBox = ({
               closeModal={handleCloseFollowModal}
               groupChats={chat}
             />
+          </Box>
+        </Fade>
+      </Modal>
+
+      {/* Confirmation Modal */}
+      <Modal
+        open={openDeleteGroupModal}
+        onClose={() => setOpenDeleteGroupModal(false)}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+        closeAfterTransition
+        BackdropComponent={Backdrop}
+        BackdropProps={{
+          timeout: 500,
+        }}
+      >
+        <Fade in={openDeleteGroupModal}>
+          <Box sx={style}>
+            <Typography id="modal-modal-title" variant="h6" component="h2">
+              {isLeaveGroup ? "Confirm Leave Group" : "Confirm Delete Group"}
+            </Typography>
+            <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+              {isLeaveGroup
+                ? "Are you sure you want to leave this group?"
+                : "Are you sure you want to delete this group?"}
+            </Typography>
+            <Box sx={{ mt: 2, display: "flex", justifyContent: "flex-end" }}>
+              <Button
+                onClick={() => setOpenDeleteGroupModal(false)}
+                color="primary"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={() => {
+                  isLeaveGroup
+                    ? handleConfirmLeaveGroup()
+                    : handleConfirmDeleteGroup();
+                }}
+                color="primary"
+                variant="contained"
+                sx={{ ml: 2 }}
+              >
+                Yes
+              </Button>
+            </Box>
           </Box>
         </Fade>
       </Modal>

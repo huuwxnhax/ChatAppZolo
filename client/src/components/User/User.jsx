@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { followUser, unfollowUser } from "../../actions/UserAction";
+import defaultProfile from "../../img/defaultProfile.png";
+
 const User = ({ person }) => {
-  const publicFolder = process.env.REACT_APP_PUBLIC_FOLDER;
   const { user } = useSelector((state) => state.authReducer.authData);
   const dispatch = useDispatch();
 
@@ -24,11 +25,7 @@ const User = ({ person }) => {
     <div className="follower">
       <div className="follower-section">
         <img
-          src={
-            person.profilePicture
-              ? person.profilePicture
-              : process.env.REACT_APP_PUBLIC_FOLDER + "defaultProfile.png"
-          }
+          src={person.profilePicture ? person.profilePicture : defaultProfile}
           alt="Profile"
           className="followerImage"
           style={{ width: "50px", height: "50px" }}

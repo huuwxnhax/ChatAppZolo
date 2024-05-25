@@ -97,7 +97,7 @@ io.on("connection", (socket) => {
             chatId,
             receiverIds,
           });
-          console.log("Sending from socket to :", user.userId);
+          console.log("Sending delete message from socket to :", user.userId);
         }
       });
     } catch (error) {
@@ -118,7 +118,7 @@ io.on("connection", (socket) => {
           io.to(user.socketId).emit("group-created", {
             groupChat,
           });
-          console.log("Sending from socket to :", user.userId);
+          console.log("Sending create group from socket to :", user.userId);
         }
       });
     } catch (error) {
@@ -139,7 +139,47 @@ io.on("connection", (socket) => {
             groupId,
             receiverIds,
           });
-          console.log("Sending from socket to :", user.userId);
+          console.log("Sending delete group from socket to :", user.userId);
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  });
+
+  socket.on("remove-member", ({ groupId, memberIdToRemove }) => {
+    try {
+      // Broadcast event to all users in the chat room to inform about member removal
+      const chatMembers = activeUsers.filter(
+        (user) => user.userId === memberIdToRemove
+      );
+      chatMembers.forEach((user) => {
+        if (user.socketId && user.userId !== socket.userId) {
+          io.to(user.socketId).emit("member-removed", {
+            groupId,
+            memberIdToRemove,
+          });
+          console.log("Sending remove member from socket to :", user.userId);
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  });
+
+  socket.on("add-member", ({ groupId, members }) => {
+    try {
+      // Broadcast event to all users in the chat room to inform about member addition
+      const chatMembers = activeUsers.filter((user) =>
+        members.includes(user.userId)
+      );
+      chatMembers.forEach((user) => {
+        if (user.socketId && user.userId !== socket.userId) {
+          io.to(user.socketId).emit("member-added", {
+            groupId,
+            members,
+          });
+          console.log("Sending add members from socket to :", user.userId);
         }
       });
     } catch (error) {

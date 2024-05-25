@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getUser } from "../../api/UserRequests";
 import { addMembersToGroup } from "../../api/GroupRequests";
 import "./Modal.css";
 import { Button } from "@mui/material";
+import { io } from "socket.io-client";
 
 const FollowModal = ({ groupChats, closeModal }) => {
   const [userFollowing, setUserFollowing] = useState([]);
@@ -13,6 +14,18 @@ const FollowModal = ({ groupChats, closeModal }) => {
   const { user } = useSelector((state) => state.authReducer.authData);
 
   const dispatch = useDispatch();
+
+  const socket = useRef();
+
+  useEffect(() => {
+    socket.current = io(process.env.REACT_APP_SOCKET_URL, {
+      path: "/websocket",
+      auth: {
+        token: `Bearer ${user.token}`,
+      },
+      transports: ["websocket"],
+    });
+  }, [user]);
 
   useEffect(() => {
     const fetchFollowing = async () => {
@@ -52,6 +65,14 @@ const FollowModal = ({ groupChats, closeModal }) => {
         memberIdToAdd: addMembers,
         requestingUserId: user._id,
       });
+
+      // send message add members to socket server
+      socket.current.emit("add-member", {
+        groupId: groupChats._id,
+        members: addMembers,
+      });
+      console.log("send message add members to socket server: ", addMembers);
+
       // Close the modal after successfully adding members to the group
       const updatedFollowingDetails = followingDetails.filter(
         (person) => !addMembers.includes(person.data._id)

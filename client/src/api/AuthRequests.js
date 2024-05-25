@@ -8,3 +8,6 @@ export const signUp = (formData) => API.post("/api/auth/register", formData);
 
 export const sendOtp = (username) =>
   API.post("/api/auth/send-otp", { username });
+
+export const forgotPassword = (username) =>
+  API.post("/api/auth/forgot-password", { username });

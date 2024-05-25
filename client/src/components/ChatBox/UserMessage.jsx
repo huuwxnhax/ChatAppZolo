@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { getUser } from "../../api/UserRequests";
+import defaultProfile from "../../img/defaultProfile.png";
 
 const UserMessage = ({ userId, currentUser }) => {
   const [user, setUser] = useState(null);
@@ -22,11 +23,7 @@ const UserMessage = ({ userId, currentUser }) => {
       className={user._id === currentUser ? "user-Message own" : "user-Message"}
     >
       <img
-        src={
-          user.profilePicture
-            ? user.profilePicture
-            : process.env.REACT_APP_PUBLIC_FOLDER + "defaultProfile.png"
-        }
+        src={user.profilePicture ? user.profilePicture : defaultProfile}
         alt="Profile"
         className="imgProfile"
         style={{ width: "40px", height: "40px" }}

@@ -7,6 +7,7 @@ import { UilSearch } from "@iconscout/react-unicons";
 import { createChatGroup } from "../../api/GroupRequests";
 import { updateChatData } from "../../actions/ChatAction";
 import { io } from "socket.io-client";
+import defaultProfile from "../../img/defaultProfile.png";
 
 const Groups = ({ closeModal }) => {
   const [userFollowing, setUserFollowing] = useState([]);
@@ -23,7 +24,13 @@ const Groups = ({ closeModal }) => {
   const socket = useRef();
 
   useEffect(() => {
-    socket.current = io("ws://localhost:8800");
+    socket.current = io(process.env.REACT_APP_SOCKET_URL, {
+      path: "/websocket",
+      auth: {
+        token: `Bearer ${user.token}`,
+      },
+      transports: ["websocket"],
+    });
   }, [user]);
 
   const handleChangeNameGroup = (e) => {
@@ -86,7 +93,6 @@ const Groups = ({ closeModal }) => {
 
       const followingInfoPromises = following.map(async (userId) => {
         const userInfo = await getUser(userId);
-        // console.log("UserInfor:"  + userInfo);
         return userInfo;
       });
       try {
@@ -98,15 +104,6 @@ const Groups = ({ closeModal }) => {
     };
     fetchFollowing();
   }, [user._id]);
-
-  // get all users
-  // useEffect(() => {
-  //   const fetchPersons = async () => {
-  //     const { data } = await getAllUser();
-  //     setPersons(data);
-  //   };
-  //   fetchPersons();
-  // }, []);
 
   return (
     <div className="groups-container">
@@ -143,8 +140,7 @@ const Groups = ({ closeModal }) => {
                   src={
                     user.data.profilePicture
                       ? user.data.profilePicture
-                      : process.env.REACT_APP_PUBLIC_FOLDER +
-                        "defaultProfile.png"
+                      : defaultProfile
                   }
                   alt="Profile"
                   className="followerImage"
@@ -166,40 +162,6 @@ const Groups = ({ closeModal }) => {
             </div>
           ))}
         </div>
-
-        {/* Other user */}
-        {/* <div className='following-section'>
-          <h3>Other people</h3>
-          {persons.map((person) => {
-            if (person._id !== user._id && !userFollowing.includes(person._id)) {
-              
-              return (
-                <div className='following-user' key={person._id}>
-                  <div>
-                      <img
-                        src={person.profilePicture? process.env.REACT_APP_PUBLIC_FOLDER + person.profilePicture : process.env.REACT_APP_PUBLIC_FOLDER + "defaultProfile.png"}
-                        alt="Profile"
-                        className="followerImage"
-                        style={{ width: "50px", height: "50px" }}
-                      />
-                      <div className='name'>
-                        <span>{person.firstname} {person.lastname}</span>
-                        <span>{person.username}</span>
-                      </div>
-                  </div>
-                    <button 
-                      className='button fc-button' 
-                      onClick={() => handleAddMember(person._id)}
-                    >
-                      {addedUsers.includes(person._id) ? "Added" : "Add"}
-                    </button>
-                </div>
-              );
-            } else {
-              return null;
-            }
-          })}
-        </div> */}
       </div>
 
       {/* button section */}

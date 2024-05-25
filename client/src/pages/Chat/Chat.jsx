@@ -6,13 +6,11 @@ import NavIcons from "../../components/NavIcons/NavIcons";
 import "./Chat.css";
 import { useEffect } from "react";
 import { userChats } from "../../api/ChatRequests";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { io } from "socket.io-client";
 import { userChatGroups } from "../../api/GroupRequests";
 
 const Chat = () => {
-  const dispatch = useDispatch();
-
   const socket = useRef();
   const { user } = useSelector((state) => state.authReducer.authData);
   const chatdata = useSelector((state) => state.chatReducer.chatUsers);
@@ -105,6 +103,34 @@ const Chat = () => {
     // Xử lý khi người dùng được chọn
     setCurrentChat(userData);
   };
+
+  useEffect(() => {
+    socket.current.on("member-removed", (data) => {
+      console.log("Member Removed data from socket to client: ", data);
+      const { groupId, memberIdToRemove } = data;
+      if (user._id === memberIdToRemove) {
+        const updatedGroupChats = groupChats.filter(
+          (group) => group._id !== groupId
+        );
+        setGroupChats(updatedGroupChats);
+        setCurrentChat(null);
+      }
+    });
+  }, [socket, groupChats]);
+
+  useEffect(() => {
+    socket.current.on("member-added", (data) => {
+      console.log("Member Added data from socket to client: ", data);
+      const { groupId, members } = data;
+      const updatedGroupChats = groupChats.map((group) => {
+        if (group._id === groupId) {
+          return { ...group, members };
+        }
+        return group;
+      });
+      setGroupChats(updatedGroupChats);
+    });
+  }, [socket, groupChats]);
 
   const checkOnlineStatus = (chat) => {
     const chatMember = chat.members.find((member) => member !== user._id);

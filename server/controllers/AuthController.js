@@ -186,26 +186,111 @@ export const loginUser = async (req, res) => {
   }
 };
 
-// forgot password
+// const sendCurrentPasswordEmail = async (username, password) => {
+//   try {
+//     let transporter = nodeMailer.createTransport({
+//       host: process.env.EMAIL_HOST,
+//       port: 587,
+//       secure: false,
+//       auth: {
+//         user: process.env.EMAIL_USER,
+//         pass: process.env.PASSWORD,
+//       },
+//     });
+
+//     let mailOptions = await transporter.sendMail({
+//       from: process.env.EMAIL_USER,
+//       to: username,
+//       subject: "Your Current Password",
+//       text: `Your current password is: ${password}`,
+//     });
+
+//     return mailOptions;
+//   } catch (error) {
+//     throw new Error("Failed to send current password email");
+//   }
+// };
+
+// // forgot password
+// export const forgotPassword = async (req, res) => {
+//   const { username } = req.body;
+//   try {
+//     const user = await UserModel.findOne({ username: username });
+//     if (!user) {
+//       return res.status(404).json({ message: "User not found" });
+//     }
+//     const currentPassword = user.password;
+//     console.log("currentPassword", currentPassword);
+//     await sendCurrentPasswordEmail(username, currentPassword);
+//     res.status(200).json({ message: "Current password sent to email" });
+//   } catch (error) {
+//     res
+//       .status(500)
+//       .json({ message: "Failed to process request", error: error.message });
+//   }
+// };
+
+const generateTemporaryPassword = () => {
+  return otpGenerator.generate(8, {
+    digits: true,
+    alphabets: true,
+    upperCase: true,
+    specialChars: false,
+  });
+};
+// Function to send email with the temporary password
+const sendPasswordEmail = async (username, password) => {
+  try {
+    let transporter = nodeMailer.createTransport({
+      host: process.env.EMAIL_HOST,
+      port: 587,
+      secure: false,
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.PASSWORD,
+      },
+    });
+
+    let mailOptions = await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: username,
+      subject: "Your Temporary Password",
+      text: `Your temporary password is: ${password}`,
+    });
+
+    return mailOptions;
+  } catch (error) {
+    throw new Error("Failed to send password email");
+  }
+};
+
+// forgot password function
 export const forgotPassword = async (req, res) => {
   const { username } = req.body;
   try {
-    const user = await UserModel.findOne({ username: username });
+    const user = await UserModel.findOne({ username });
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-    const otp = otpGenerator.generate(6, {
-      digits: true,
-      alphabets: false,
-      upperCase: false,
-      specialChars: false,
-    });
-    await OTP.create({ username, otp });
-    await sendOTP(username, otp);
-    res.status(200).json({ message: "OTP sent successfully" });
+
+    // Generate a new temporary password
+    const temporaryPassword = generateTemporaryPassword();
+
+    // Hash the temporary password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(temporaryPassword, salt);
+
+    // Update user's password in the database
+    user.password = hashedPassword;
+    await user.save();
+
+    // Send the temporary password via email
+    await sendPasswordEmail(username, temporaryPassword);
+
+    res.status(200).json({ message: "Temporary password sent to email" });
   } catch (error) {
     res
       .status(500)
-      .json({ message: "Failed to send OTP", error: error.message });
+      .json({ message: "Failed to process request", error: error.message });
   }
 };

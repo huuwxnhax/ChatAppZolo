@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { getUser } from "../../api/UserRequests";
 import avatarGroupDefault from "../../img/avatar-group.png";
+import defaultProfile from "../../img/defaultProfile.png";
 
 const Conversation = ({ isGroup, data, currentUser, online }) => {
   const [userData, setUserData] = useState(null);
@@ -34,7 +35,7 @@ const Conversation = ({ isGroup, data, currentUser, online }) => {
                 src={
                   userData?.profilePicture
                     ? userData.profilePicture
-                    : process.env.REACT_APP_PUBLIC_FOLDER + "defaultProfile.png"
+                    : defaultProfile
                 }
                 alt="Profile"
                 className="followerImage"

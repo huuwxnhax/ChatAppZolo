@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { uploadImage } from "../../actions/UploadAction";
 import { updateUser } from "../../actions/UserAction";
+import defaultProfile from "../../img/defaultProfile.png";
 
 const ProfileModal = ({ modalOpened, setModalOpened, data }) => {
   const theme = useMantineTheme();
@@ -68,9 +69,7 @@ const ProfileModal = ({ modalOpened, setModalOpened, data }) => {
         <div className="backgroundImage-section">
           <img
             src={
-              formData.profilePicture
-                ? formData.profilePicture
-                : process.env.REACT_APP_PUBLIC_FOLDER + "defaultProfile.png"
+              formData.profilePicture ? formData.profilePicture : defaultProfile
             }
             alt="Profile"
             className="backgroundImage-infor"
