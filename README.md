@@ -13,4 +13,4 @@ APP CHAT SCREEN UI
    ![chatbox](images/chatbox.png)
 
 5. DEPLOYMENT
-   ![Deployment](images/login.png)
+   ![Deployment](images/deployment.png)
