@@ -1,16 +1,16 @@
 APP CHAT SCREEN UI
 
-1. LOGIN
+1. DEPLOYMENT
+   ![Deployment](images/deployment.png)
+
+2. LOGIN
    ![Login](images/login.png)
 
-2. HOME PAGE
+3. HOME PAGE
    ![homepage](images/home.png)
 
-3. FOLLOWING
+4. FOLLOWING
    ![following](images/following.png)
 
-4. CHAT BOX
+5. CHAT BOX
    ![chatbox](images/chatbox.png)
-
-5. DEPLOYMENT
-   ![Deployment](images/deployment.png)
