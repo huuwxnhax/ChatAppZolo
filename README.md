@@ -1,7 +1,7 @@
 APP CHAT SCREEN UI
 
 1. DEPLOYMENT
-   ![Deployment](images/deployment.png)
+   ![Deployment](images/deploymentt.png)
 
 2. LOGIN
    ![Login](images/login.png)
